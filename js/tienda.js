@@ -116,6 +116,8 @@ function displayProducts(productos) {
 
 // ===== FUNCIÓN PARA AGREGAR AL CARRITO =====
 function agregarAlCarrito(id, nombre, precio, imagen) {
+    console.log('🛒 Intentando agregar al carrito:', { id, nombre, precio });
+    
     if (typeof carrito !== 'undefined' && carrito) {
         carrito.agregarItem({
             id: id,
@@ -124,11 +126,10 @@ function agregarAlCarrito(id, nombre, precio, imagen) {
             imagen_url: imagen
         });
     } else {
-        console.error('❌ Carrito no disponible');
-        alert('Error: Carrito no disponible');
+        console.error('❌ Error: carrito no está definido');
+        alert('Error: Carrito no disponible. Recarga la página.');
     }
 }
-
 // ===== FUNCIÓN PARA OBTENER CATEGORÍA DEL PRODUCTO =====
 function getProductCategory(nombre) {
     const nombreLower = nombre.toLowerCase();
@@ -248,3 +249,4 @@ function mostrarError(mensaje) {
 function formatPrice(price) {
     return '€' + parseFloat(price).toFixed(2);
 }
+
