@@ -30,27 +30,10 @@ function showNotification(message, type = 'success') {
         <span>${message}</span>
     `;
     
-    notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        padding: 1rem 2rem;
-        background: ${type === 'success' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #dc2626)'};
-        color: white;
-        border-radius: 50px;
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        z-index: 9999;
-        animation: slideInRight 0.3s ease;
-    `;
-    
     document.body.appendChild(notification);
     
     setTimeout(() => {
-        notification.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => notification.remove(), 300);
+        notification.remove();
     }, 3000);
 }
 
@@ -127,7 +110,6 @@ class Carrito {
             cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
         }
 
-        // Actualizar modal del carrito si está abierto
         this.actualizarModalCarrito();
     }
 
@@ -139,7 +121,7 @@ class Carrito {
         const cartTotal = document.getElementById('cart-total');
 
         if (this.items.length === 0) {
-            cartItems.innerHTML = '<p class="empty-cart">Tu carrito está vacío</p>';
+            cartItems.innerHTML = '<div class="empty-cart"><i class="fas fa-shopping-cart"></i><p>Tu carrito está vacío</p></div>';
             cartTotal.textContent = formatPrice(0);
             return;
         }
@@ -187,11 +169,7 @@ class Carrito {
         const mensaje = this.generarMensajeWhatsApp();
         const url = `https://wa.me/${OWNER_PHONE}?text=${mensaje}`;
         
-        // Abrir WhatsApp
         window.open(url, '_blank');
-        
-        // Opcional: Vaciar carrito después del pedido
-        // this.vaciar();
     }
 }
 
@@ -209,19 +187,23 @@ function mostrarModalPlan(plan) {
     
     modal.style.display = 'flex';
     
-    // Animar entrada
     setTimeout(() => {
-        modal.querySelector('.modal-content').style.transform = 'scale(1)';
+        document.querySelector('.modal-content').style.transform = 'scale(1)';
     }, 10);
 }
 
 function cerrarModalPlan() {
     const modal = document.getElementById('plan-modal');
-    modal.querySelector('.modal-content').style.transform = 'scale(0.9)';
+    const modalContent = document.querySelector('.modal-content');
+    
+    if (modalContent) {
+        modalContent.style.transform = 'scale(0.9)';
+    }
     
     setTimeout(() => {
         modal.style.display = 'none';
-        document.getElementById('plan-form').reset();
+        const form = document.getElementById('plan-form');
+        if (form) form.reset();
     }, 300);
 }
 
@@ -253,13 +235,17 @@ function toggleCart() {
     carrito.actualizarModalCarrito();
     
     setTimeout(() => {
-        modal.querySelector('.cart-content').style.transform = 'translateX(0)';
+        document.querySelector('.cart-content').style.transform = 'translateX(0)';
     }, 10);
 }
 
 function cerrarCarrito() {
     const modal = document.getElementById('cart-modal');
-    modal.querySelector('.cart-content').style.transform = 'translateX(100%)';
+    const cartContent = document.querySelector('.cart-content');
+    
+    if (cartContent) {
+        cartContent.style.transform = 'translateX(100%)';
+    }
     
     setTimeout(() => {
         modal.style.display = 'none';
@@ -319,6 +305,5 @@ document.addEventListener('DOMContentLoaded', function() {
         el.classList.add('animate-on-scroll');
     });
     
-    // Actualizar contador del carrito
     carrito.actualizarUI();
 });
