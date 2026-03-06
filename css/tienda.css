@@ -3,7 +3,7 @@
 .store-hero {
     height: 40vh;
     background: linear-gradient(135deg, #2563ebcc, #60a5facc), 
-                url('https://images.unsplash.com/photo-1546483875-901b9d1f3f8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+                url('https://images.unsplash.com/photo-1546483875-901b9d1f3f8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
     background-size: cover;
     background-position: center;
     display: flex;
