@@ -23,6 +23,8 @@ function setupAdminForm() {
     const imagePreview = document.getElementById('image-preview');
     const fileName = document.getElementById('file-name');
 
+    if (!form) return;
+
     imageInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -38,7 +40,7 @@ function setupAdminForm() {
                 return;
             }
             
-            fileName.textContent = file.name;
+            if (fileName) fileName.textContent = file.name;
             
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -51,10 +53,10 @@ function setupAdminForm() {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        const nombre = document.getElementById('product-name').value.trim();
-        const descripcion = document.getElementById('product-description').value.trim();
-        const precio = parseFloat(document.getElementById('product-price').value);
-        const imagenFile = document.getElementById('product-image').files[0];
+        const nombre = document.getElementById('product-name')?.value.trim();
+        const descripcion = document.getElementById('product-description')?.value.trim();
+        const precio = parseFloat(document.getElementById('product-price')?.value);
+        const imagenFile = document.getElementById('product-image')?.files[0];
 
         if (!nombre || !descripcion || !precio || !imagenFile) {
             showNotification('Por favor completa todos los campos', 'error');
@@ -73,7 +75,7 @@ function setupAdminForm() {
 
         try {
             const fileName = `${Date.now()}_${imagenFile.name}`;
-            const { data: imageData, error: imageError } = await supabase.storage
+            const { error: imageError } = await supabase.storage
                 .from('productos')
                 .upload(fileName, imagenFile);
 
@@ -83,7 +85,7 @@ function setupAdminForm() {
                 .from('productos')
                 .getPublicUrl(fileName);
 
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('productos')
                 .insert([
                     {
@@ -99,7 +101,7 @@ function setupAdminForm() {
             showNotification('Producto guardado exitosamente', 'success');
             form.reset();
             imagePreview.innerHTML = '<i class="fas fa-cloud-upload-alt"></i><p>Vista previa de la imagen</p>';
-            fileName.textContent = 'Ningún archivo seleccionado';
+            if (fileName) fileName.textContent = 'Ningún archivo seleccionado';
             
             loadAdminProducts();
 
