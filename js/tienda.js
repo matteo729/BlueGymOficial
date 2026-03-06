@@ -3,8 +3,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadProducts();
     setupFilters();
-    
-    // Suscribirse a cambios en la base de datos
     subscribeToChanges();
 });
 
@@ -81,12 +79,14 @@ function displayProducts(productos) {
 }
 
 function agregarAlCarrito(id, nombre, precio, imagen) {
-    carrito.agregarItem({
-        id: id,
-        nombre: nombre,
-        precio: precio,
-        imagen_url: imagen
-    });
+    if (typeof carrito !== 'undefined') {
+        carrito.agregarItem({
+            id: id,
+            nombre: nombre,
+            precio: precio,
+            imagen_url: imagen
+        });
+    }
 }
 
 function getProductCategory(name) {
@@ -138,9 +138,8 @@ function filterProducts(filter) {
     });
 }
 
-// ===== SUSCRIPCIÓN EN TIEMPO REAL =====
 function subscribeToChanges() {
-    const subscription = supabase
+    supabase
         .channel('productos_changes')
         .on('postgres_changes', 
             { 
@@ -148,9 +147,7 @@ function subscribeToChanges() {
                 schema: 'public', 
                 table: 'productos' 
             }, 
-            (payload) => {
-                console.log('Cambio detectado:', payload);
-                // Recargar productos cuando hay cambios
+            () => {
                 loadProducts();
                 showNotification('La tienda se ha actualizado', 'success');
             }
