@@ -1,171 +1,77 @@
-// tienda.js - Scripts específicos para la tienda - Blue Gym
+// main.js - Funciones compartidas - Blue Gym
 
+// ===== CONFIGURACIÓN DE SUPABASE =====
+const SUPABASE_URL = 'https://vyhqyrbqequyxjtwcint.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5aHF5cmJxZXF1eXhqdHdjaW50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDczODEsImV4cCI6MjA4ODM4MzM4MX0.6nbzM7dPU7t5nosWTGj58Ycb5zTLUric3ApSThethK0';
+
+// Configuración de WhatsApp
+const OWNER_PHONE = '521234567890';
+
+// Verificar que Supabase está cargado
+console.log('🔄 Verificando Supabase...', typeof supabase);
+
+// Inicializar cliente de Supabase
+let supabaseClient;
+try {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('✅ Cliente Supabase inicializado');
+    window.supabaseClient = supabaseClient;
+} catch (error) {
+    console.error('❌ Error al inicializar Supabase:', error);
+}
+
+// ===== FUNCIONES DE UTILIDAD =====
+function formatPrice(price) {
+    return '€' + parseFloat(price).toFixed(2);
+}
+
+function showNotification(message, type = 'success') {
+    alert(message); // Simple mientras tanto
+}
+
+// ===== FUNCIONES DEL MODAL DE PLANES =====
+function mostrarModalPlan(plan) {
+    const modal = document.getElementById('plan-modal');
+    if (!modal) return;
+    
+    document.getElementById('selected-plan').textContent = plan.nombre;
+    document.getElementById('plan-price').textContent = plan.precio;
+    
+    modal.style.display = 'flex';
+    setTimeout(() => {
+        document.querySelector('.modal-content').style.transform = 'scale(1)';
+    }, 10);
+}
+
+function cerrarModalPlan() {
+    const modal = document.getElementById('plan-modal');
+    document.querySelector('.modal-content').style.transform = 'scale(0.9)';
+    
+    setTimeout(() => {
+        modal.style.display = 'none';
+        document.getElementById('plan-form')?.reset();
+    }, 300);
+}
+
+function enviarPlanWhatsApp(event) {
+    event.preventDefault();
+    
+    const nombre = document.getElementById('nombre').value;
+    const apellido = document.getElementById('apellido').value;
+    const plan = document.getElementById('selected-plan').textContent;
+    const precio = document.getElementById('plan-price').textContent;
+    
+    const mensaje = `🏋️ *Nueva Solicitud de Plan - Blue Gym*\n\n` +
+                   `*Plan:* ${plan}\n` +
+                   `*Precio:* ${precio}\n` +
+                   `*Cliente:* ${nombre} ${apellido}`;
+    
+    const url = `https://wa.me/${OWNER_PHONE}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+    cerrarModalPlan();
+}
+
+// ===== INICIALIZACIÓN =====
 document.addEventListener('DOMContentLoaded', function() {
-    loadProducts();
-    setupFilters();
-    subscribeToChanges();
+    console.log('✅ Main.js cargado');
 });
-
-async function loadProducts() {
-    const container = document.getElementById('products-container');
-    
-    if (!container) return;
-    
-    container.innerHTML = `
-        <div class="loading">
-            <i class="fas fa-spinner fa-spin"></i>
-            Cargando productos...
-        </div>
-    `;
-    
-    try {
-        const { data: productos, error } = await supabase
-            .from('productos')
-            .select('*')
-            .order('id', { ascending: true });
-
-        if (error) {
-            console.error('Error de Supabase:', error);
-            throw error;
-        }
-
-        displayProducts(productos);
-    } catch (error) {
-        console.error('Error cargando productos:', error);
-        container.innerHTML = `
-            <div class="error">
-                <i class="fas fa-exclamation-circle"></i>
-                Error al cargar los productos. 
-                <br>
-                <small>${error.message || 'Verifica que la tabla "productos" exista en Supabase'}</small>
-                <br><br>
-                <button onclick="loadProducts()" class="btn" style="margin-top: 1rem;">
-                    <i class="fas fa-sync"></i> Reintentar
-                </button>
-            </div>
-        `;
-    }
-}
-
-function displayProducts(productos) {
-    const container = document.getElementById('products-container');
-    
-    if (!productos || productos.length === 0) {
-        container.innerHTML = `
-            <div class="no-products">
-                <i class="fas fa-box-open"></i>
-                <p>No hay productos disponibles en este momento.</p>
-                <br>
-                <p><small>Agrega productos desde el panel de administración</small></p>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = `
-        <div class="products-grid">
-            ${productos.map(producto => `
-                <div class="product-card" data-id="${producto.id}" data-category="${getProductCategory(producto.nombre)}">
-                    <span class="product-badge">Nuevo</span>
-                    <div class="product-image-container">
-                        <img src="${producto.imagen_url}" alt="${producto.nombre}" class="product-image" loading="lazy">
-                        <div class="product-overlay"></div>
-                    </div>
-                    <div class="product-info">
-                        <span class="product-category">${getProductCategory(producto.nombre)}</span>
-                        <h3 class="product-title">${producto.nombre}</h3>
-                        <p class="product-description">${producto.descripcion.substring(0, 60)}...</p>
-                        <div class="product-footer">
-                            <span class="product-price">${formatPrice(producto.precio)}</span>
-                            <button class="btn-add" onclick="agregarAlCarrito(${producto.id}, '${producto.nombre.replace(/'/g, "\\'")}', ${producto.precio}, '${producto.imagen_url}')">
-                                <i class="fas fa-cart-plus"></i>
-                                Agregar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('')}
-        </div>
-    `;
-}
-
-function agregarAlCarrito(id, nombre, precio, imagen) {
-    if (typeof carrito !== 'undefined') {
-        carrito.agregarItem({
-            id: id,
-            nombre: nombre,
-            precio: precio,
-            imagen_url: imagen
-        });
-    }
-}
-
-function getProductCategory(name) {
-    const categories = {
-        'proteína': 'Nutrición',
-        'whey': 'Nutrición',
-        'guantes': 'Accesorios',
-        'botella': 'Accesorios',
-        'shaker': 'Accesorios',
-        'banda': 'Equipamiento',
-        'batidora': 'Electrónica'
-    };
-    
-    const lowerName = name.toLowerCase();
-    for (const [key, value] of Object.entries(categories)) {
-        if (lowerName.includes(key)) return value;
-    }
-    return 'Otros';
-}
-
-function setupFilters() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            const filter = this.dataset.filter;
-            filterProducts(filter);
-        });
-    });
-}
-
-function filterProducts(filter) {
-    const products = document.querySelectorAll('.product-card');
-    
-    products.forEach(product => {
-        if (filter === 'todos') {
-            product.style.display = 'block';
-        } else {
-            const category = product.dataset.category?.toLowerCase();
-            if (category === filter) {
-                product.style.display = 'block';
-            } else {
-                product.style.display = 'none';
-            }
-        }
-    });
-}
-
-function subscribeToChanges() {
-    try {
-        supabase
-            .channel('productos_changes')
-            .on('postgres_changes', 
-                { 
-                    event: '*', 
-                    schema: 'public', 
-                    table: 'productos' 
-                }, 
-                () => {
-                    loadProducts();
-                    showNotification('La tienda se ha actualizado', 'success');
-                }
-            )
-            .subscribe();
-    } catch (error) {
-        console.log('Suscripción en tiempo real no disponible');
-    }
-}
