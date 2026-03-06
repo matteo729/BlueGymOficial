@@ -1,5 +1,3 @@
-// main.js - Funciones compartidas - Blue Gym
-
 // ===== CONFIGURACIÓN DE SUPABASE =====
 const SUPABASE_URL = 'https://vyhqyrbqequyxjtwcint.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5aHF5cmJxZXF1eXhqdHdjaW50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDczODEsImV4cCI6MjA4ODM4MzM4MX0.6nbzM7dPU7t5nosWTGj58Ycb5zTLUric3ApSThethK0';
@@ -75,3 +73,4 @@ function enviarPlanWhatsApp(event) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Main.js cargado');
 });
+
