@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Gym - Panel de Administración</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/admin.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="admin-body">
+    <nav class="navbar admin-nav">
+        <div class="logo">Blue Gym Admin</div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">← Volver al Sitio</a></li>
+            <li><a href="#products">Productos</a></li>
+            <li><a href="#add">Agregar</a></li>
+        </ul>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Panel de Administración</h1>
+            <p>Gestiona los productos de la tienda Blue Gym</p>
+        </div>
+        
+        <div class="admin-grid">
+            <!-- Formulario para agregar productos -->
+            <div class="admin-card" id="add">
+                <h2><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h2>
+                
+                <form id="product-form" class="admin-form">
+                    <div class="form-group">
+                        <label for="product-name">Nombre del Producto</label>
+                        <input type="text" id="product-name" placeholder="Ej: Proteína Whey Blue" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-description">Descripción</label>
+                        <textarea id="product-description" rows="4" placeholder="Describe las características del producto..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-price">Precio (€)</label>
+                        <input type="number" id="product-price" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Imagen del Producto</label>
+                        <div class="image-preview-container">
+                            <div id="image-preview" class="image-preview">
+                                <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #94a3b8;"></i>
+                                <p>Vista previa de la imagen</p>
+                            </div>
+                        </div>
+                        
+                        <div class="file-input-wrapper">
+                            <input type="file" id="product-image" accept="image/*" required>
+                            <div class="file-input-button">
+                                <i class="fas fa-camera"></i> Seleccionar Imagen
+                            </div>
+                        </div>
+                        <small id="file-name" style="color: #64748b; margin-top: 0.5rem; display: block;">
+                            Ningún archivo seleccionado
+                        </small>
+                    </div>
+
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save"></i> Guardar Producto
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Lista de productos existentes -->
+            <div class="admin-card" id="products">
+                <h2><i class="fas fa-boxes"></i> Productos Actuales</h2>
+                <div id="admin-products-list" class="products-list">
+                    <!-- Productos cargados dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
