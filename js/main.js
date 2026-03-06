@@ -1,9 +1,7 @@
 // main.js - Funciones compartidas - Blue Gym
 
 // ===== CONFIGURACIÓN DE SUPABASE =====
-// IMPORTANTE: Reemplaza estos valores con los de tu proyecto Supabase
-// SUPABASE_URL: La URL de tu proyecto (ej: https://tuproyecto.supabase.co)
-// SUPABASE_ANON_KEY: Tu clave anónima de Supabase
+// IMPORTANTE: Ya configurado con tus credenciales
 const SUPABASE_URL = 'https://vyhqyrbqequyxjtwcint.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5aHF5cmJxZXF1eXhqdHdjaW50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDczODEsImV4cCI6MjA4ODM4MzM4MX0.6nbzM7dPU7t5nosWTGj58Ycb5zTLUric3ApSThethK0';
 
@@ -179,23 +177,27 @@ const carrito = new Carrito();
 // ===== FUNCIONES DEL MODAL DE PLANES =====
 function mostrarModalPlan(plan) {
     const modal = document.getElementById('plan-modal');
+    if (!modal) return;
+    
     const planName = document.getElementById('selected-plan');
     const planPrice = document.getElementById('plan-price');
     
-    planName.textContent = plan.nombre;
-    planPrice.textContent = plan.precio;
+    if (planName) planName.textContent = plan.nombre;
+    if (planPrice) planPrice.textContent = plan.precio;
     
     modal.style.display = 'flex';
     
     setTimeout(() => {
-        document.querySelector('.modal-content').style.transform = 'scale(1)';
+        const modalContent = document.querySelector('.modal-content');
+        if (modalContent) modalContent.style.transform = 'scale(1)';
     }, 10);
 }
 
 function cerrarModalPlan() {
     const modal = document.getElementById('plan-modal');
-    const modalContent = document.querySelector('.modal-content');
+    if (!modal) return;
     
+    const modalContent = document.querySelector('.modal-content');
     if (modalContent) {
         modalContent.style.transform = 'scale(0.9)';
     }
@@ -210,10 +212,15 @@ function cerrarModalPlan() {
 function enviarPlanWhatsApp(event) {
     event.preventDefault();
     
-    const nombre = document.getElementById('nombre').value;
-    const apellido = document.getElementById('apellido').value;
-    const plan = document.getElementById('selected-plan').textContent;
-    const precio = document.getElementById('plan-price').textContent;
+    const nombre = document.getElementById('nombre')?.value;
+    const apellido = document.getElementById('apellido')?.value;
+    const plan = document.getElementById('selected-plan')?.textContent;
+    const precio = document.getElementById('plan-price')?.textContent;
+    
+    if (!nombre || !apellido || !plan || !precio) {
+        showNotification('Por favor completa todos los campos', 'error');
+        return;
+    }
     
     const mensaje = `🏋️ *Nueva Solicitud de Plan - Blue Gym*\n\n` +
                    `*Plan Seleccionado:* ${plan}\n` +
@@ -231,18 +238,22 @@ function enviarPlanWhatsApp(event) {
 // ===== FUNCIONES DEL CARRITO UI =====
 function toggleCart() {
     const modal = document.getElementById('cart-modal');
+    if (!modal) return;
+    
     modal.style.display = 'flex';
     carrito.actualizarModalCarrito();
     
     setTimeout(() => {
-        document.querySelector('.cart-content').style.transform = 'translateX(0)';
+        const cartContent = document.querySelector('.cart-content');
+        if (cartContent) cartContent.style.transform = 'translateX(0)';
     }, 10);
 }
 
 function cerrarCarrito() {
     const modal = document.getElementById('cart-modal');
-    const cartContent = document.querySelector('.cart-content');
+    if (!modal) return;
     
+    const cartContent = document.querySelector('.cart-content');
     if (cartContent) {
         cartContent.style.transform = 'translateX(100%)';
     }
