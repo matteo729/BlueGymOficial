@@ -310,68 +310,7 @@
     <script src="js/main.js"></script>
     <script src="js/index.js"></script>
     
-    <!-- Script específico para los planes -->
     <script>
-    // Configuración de WhatsApp (cambiar por el número del dueño)
-    const OWNER_PHONE = '521234567890'; // Formato: código de país + número sin +
-    
-    // Función para mostrar el modal del plan
-    function mostrarModalPlan(plan) {
-        const modal = document.getElementById('plan-modal');
-        const planName = document.getElementById('selected-plan');
-        const planPrice = document.getElementById('plan-price');
-        
-        planName.textContent = plan.nombre;
-        planPrice.textContent = plan.precio;
-        
-        modal.style.display = 'flex';
-        
-        // Animar entrada
-        setTimeout(() => {
-            document.querySelector('.modal-content').style.transform = 'scale(1)';
-        }, 10);
-    }
-    
-    // Función para cerrar el modal
-    function cerrarModalPlan() {
-        const modal = document.getElementById('plan-modal');
-        document.querySelector('.modal-content').style.transform = 'scale(0.9)';
-        
-        setTimeout(() => {
-            modal.style.display = 'none';
-            document.getElementById('plan-form').reset();
-        }, 300);
-    }
-    
-    // Función para enviar por WhatsApp
-    function enviarPlanWhatsApp(event) {
-        event.preventDefault();
-        
-        const nombre = document.getElementById('nombre').value;
-        const apellido = document.getElementById('apellido').value;
-        const plan = document.getElementById('selected-plan').textContent;
-        const precio = document.getElementById('plan-price').textContent;
-        
-        const mensaje = `🏋️ *Nueva Solicitud de Plan - Blue Gym*\n\n` +
-                       `*Plan Seleccionado:* ${plan}\n` +
-                       `*Precio:* ${precio}\n` +
-                       `*Cliente:* ${nombre} ${apellido}\n\n` +
-                       `¡Gracias por elegir Blue Gym! Un asesor se comunicará contigo.`;
-        
-        const url = `https://wa.me/${OWNER_PHONE}?text=${encodeURIComponent(mensaje)}`;
-        
-        window.open(url, '_blank');
-        cerrarModalPlan();
-        
-        // Mostrar notificación si la función existe
-        if (typeof showNotification === 'function') {
-            showNotification('Solicitud enviada por WhatsApp', 'success');
-        } else {
-            alert('Solicitud enviada por WhatsApp');
-        }
-    }
-    
-    // Asignar eventos a los botones de planes cuando el documento cargue
     document.addEventListener('DOMContentLoaded', function() {
         const planButtons = document.querySelectorAll('.select-plan-btn');
         
