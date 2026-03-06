@@ -16,54 +16,27 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-<!-- Modificar el navbar para incluir el carrito -->
-<nav class="navbar">
-    <div class="logo">Blue Gym</div>
-    <div class="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-    <ul class="nav-links">
-        <li><a href="index.html">Inicio</a></li>
-        <li><a href="index.html#about">Sobre Nosotros</a></li>
-        <li><a href="index.html#plans">Planes</a></li>
-        <li><a href="index.html#trainers">Entrenadores</a></li>
-        <li><a href="tienda.html">Tienda</a></li>
-        <li>
-            <div class="cart-icon" onclick="toggleCart()">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-count">0</span>
-            </div>
-        </li>
-    </ul>
-</nav>
-
-<!-- Añadir el modal del carrito al final del body -->
-<div id="cart-modal" class="cart-modal">
-    <div class="cart-content">
-        <div class="cart-header">
-            <h2><i class="fas fa-shopping-cart"></i> Tu Carrito</h2>
-            <span class="close-cart" onclick="cerrarCarrito()">&times;</span>
+    <nav class="navbar">
+        <div class="logo">Blue Gym</div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
-        
-        <div id="cart-items" class="cart-items">
-            <!-- Items del carrito se cargarán dinámicamente -->
-        </div>
-        
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>Total:</span>
-                <span id="cart-total">€0.00</span>
-            </div>
-            
-            <div class="cart-actions">
-                <button class="btn btn-secondary" onclick="carrito.vaciar()">Vaciar Carrito</button>
-                <button class="btn" onclick="carrito.realizarPedido()">Ordenar por WhatsApp</button>
-            </div>
-        </div>
-    </div>
-</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="index.html#about">Sobre Nosotros</a></li>
+            <li><a href="index.html#plans">Planes</a></li>
+            <li><a href="index.html#trainers">Entrenadores</a></li>
+            <li><a href="tienda.html">Tienda</a></li>
+            <li>
+                <div class="cart-icon" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </div>
+            </li>
+        </ul>
+    </nav>
 
     <section class="store-hero">
         <div class="store-hero-content">
@@ -93,8 +66,33 @@
         </div>
     </section>
 
+    <!-- Modal del Carrito -->
+    <div id="cart-modal" class="cart-modal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2><i class="fas fa-shopping-cart"></i> Tu Carrito</h2>
+                <span class="close-cart" onclick="cerrarCarrito()">&times;</span>
+            </div>
+            
+            <div id="cart-items" class="cart-items">
+                <!-- Items del carrito se cargarán dinámicamente -->
+            </div>
+            
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cart-total">€0.00</span>
+                </div>
+                
+                <div class="cart-actions">
+                    <button class="btn btn-secondary" onclick="carrito.vaciar()">Vaciar Carrito</button>
+                    <button class="btn" onclick="carrito.realizarPedido()">Ordenar por WhatsApp</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer">
-        <!-- Mismo footer que index.html -->
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Blue Gym</h3>
