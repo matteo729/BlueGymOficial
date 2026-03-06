@@ -4,7 +4,7 @@
 .hero {
     min-height: 100vh;
     background: linear-gradient(135deg, #2563eb20, #60a5fa20), 
-                url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+                url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -331,6 +331,21 @@
 .plan-features i {
     color: #2563eb;
     font-size: 1.1rem;
+}
+
+.select-plan-btn {
+    width: 100%;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+}
+
+.plan-card .btn {
+    pointer-events: auto;
+}
+
+.plan-card {
+    cursor: default;
 }
 
 /* ===== ENTRENADORES MEJORADOS ===== */
