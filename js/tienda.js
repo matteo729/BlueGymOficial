@@ -24,7 +24,10 @@ async function loadProducts() {
             .select('*')
             .order('id', { ascending: true });
 
-        if (error) throw error;
+        if (error) {
+            console.error('Error de Supabase:', error);
+            throw error;
+        }
 
         displayProducts(productos);
     } catch (error) {
@@ -32,7 +35,13 @@ async function loadProducts() {
         container.innerHTML = `
             <div class="error">
                 <i class="fas fa-exclamation-circle"></i>
-                Error al cargar los productos. Por favor, intenta más tarde.
+                Error al cargar los productos. 
+                <br>
+                <small>${error.message || 'Verifica que la tabla "productos" exista en Supabase'}</small>
+                <br><br>
+                <button onclick="loadProducts()" class="btn" style="margin-top: 1rem;">
+                    <i class="fas fa-sync"></i> Reintentar
+                </button>
             </div>
         `;
     }
@@ -46,6 +55,8 @@ function displayProducts(productos) {
             <div class="no-products">
                 <i class="fas fa-box-open"></i>
                 <p>No hay productos disponibles en este momento.</p>
+                <br>
+                <p><small>Agrega productos desde el panel de administración</small></p>
             </div>
         `;
         return;
@@ -66,7 +77,7 @@ function displayProducts(productos) {
                         <p class="product-description">${producto.descripcion.substring(0, 60)}...</p>
                         <div class="product-footer">
                             <span class="product-price">${formatPrice(producto.precio)}</span>
-                            <button class="btn-add" onclick="agregarAlCarrito(${producto.id}, '${producto.nombre}', ${producto.precio}, '${producto.imagen_url}')">
+                            <button class="btn-add" onclick="agregarAlCarrito(${producto.id}, '${producto.nombre.replace(/'/g, "\\'")}', ${producto.precio}, '${producto.imagen_url}')">
                                 <i class="fas fa-cart-plus"></i>
                                 Agregar
                             </button>
@@ -139,18 +150,22 @@ function filterProducts(filter) {
 }
 
 function subscribeToChanges() {
-    supabase
-        .channel('productos_changes')
-        .on('postgres_changes', 
-            { 
-                event: '*', 
-                schema: 'public', 
-                table: 'productos' 
-            }, 
-            () => {
-                loadProducts();
-                showNotification('La tienda se ha actualizado', 'success');
-            }
-        )
-        .subscribe();
+    try {
+        supabase
+            .channel('productos_changes')
+            .on('postgres_changes', 
+                { 
+                    event: '*', 
+                    schema: 'public', 
+                    table: 'productos' 
+                }, 
+                () => {
+                    loadProducts();
+                    showNotification('La tienda se ha actualizado', 'success');
+                }
+            )
+            .subscribe();
+    } catch (error) {
+        console.log('Suscripción en tiempo real no disponible');
+    }
 }
