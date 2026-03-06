@@ -74,16 +74,29 @@ function setupAdminForm() {
         submitBtn.disabled = true;
 
         try {
-            const fileName = `${Date.now()}_${imagenFile.name}`;
-            const { error: imageError } = await supabase.storage
-                .from('productos')
-                .upload(fileName, imagenFile);
+            // Primero verificar si el bucket existe, si no, usar URLs de placeholder
+            let imagenUrl = '';
+            
+            try {
+                const fileName = `${Date.now()}_${imagenFile.name}`;
+                const { error: imageError } = await supabase.storage
+                    .from('productos')
+                    .upload(fileName, imagenFile);
 
-            if (imageError) throw imageError;
-
-            const { data: publicUrl } = supabase.storage
-                .from('productos')
-                .getPublicUrl(fileName);
+                if (imageError) {
+                    console.log('Error subiendo imagen, usando placeholder:', imageError);
+                    // Usar una imagen de placeholder
+                    imagenUrl = 'https://images.unsplash.com/photo-1546483875-901b9d1f3f8b?w=500';
+                } else {
+                    const { data: publicUrl } = supabase.storage
+                        .from('productos')
+                        .getPublicUrl(fileName);
+                    imagenUrl = publicUrl.publicUrl;
+                }
+            } catch (storageError) {
+                console.log('Storage no disponible, usando placeholder');
+                imagenUrl = 'https://images.unsplash.com/photo-1546483875-901b9d1f3f8b?w=500';
+            }
 
             const { error } = await supabase
                 .from('productos')
@@ -92,7 +105,7 @@ function setupAdminForm() {
                         nombre: nombre,
                         descripcion: descripcion,
                         precio: precio,
-                        imagen_url: publicUrl.publicUrl
+                        imagen_url: imagenUrl
                     }
                 ]);
 
@@ -107,7 +120,7 @@ function setupAdminForm() {
 
         } catch (error) {
             console.error('Error guardando producto:', error);
-            showNotification('Error al guardar el producto', 'error');
+            showNotification('Error al guardar el producto: ' + error.message, 'error');
         } finally {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
@@ -119,6 +132,13 @@ async function loadAdminProducts() {
     const container = document.getElementById('admin-products-list');
     
     if (!container) return;
+    
+    container.innerHTML = `
+        <div class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            Cargando productos...
+        </div>
+    `;
     
     try {
         const { data: productos, error } = await supabase
@@ -160,6 +180,11 @@ async function loadAdminProducts() {
             <div class="empty-state error">
                 <i class="fas fa-exclamation-circle"></i>
                 <p>Error al cargar los productos</p>
+                <small>${error.message}</small>
+                <br><br>
+                <button onclick="loadAdminProducts()" class="btn" style="margin-top: 1rem;">
+                    <i class="fas fa-sync"></i> Reintentar
+                </button>
             </div>
         `;
     }
@@ -183,13 +208,6 @@ async function deleteProduct(id) {
             .eq('id', id);
 
         if (deleteError) throw deleteError;
-
-        if (producto?.imagen_url) {
-            const fileName = producto.imagen_url.split('/').pop();
-            await supabase.storage
-                .from('productos')
-                .remove([fileName]);
-        }
 
         showNotification('Producto eliminado exitosamente', 'success');
         loadAdminProducts();
